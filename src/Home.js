@@ -13,15 +13,18 @@ const Home = () => {
 		setBlogs(newBlogs);
 	}
 
-	// Executed (after?) every render
+	const [name, setName] = useState('mario');
+
+	// Executed (after?) every dependencies render
 	useEffect(() => {
 		console.log('useEffect ran');
-		console.log(blogs);
-	});
+		console.log(name);
+	}, [name]);
 
 	return (
 		<div className="home">
 			<BlogList blogs={ blogs } title="All Blogs!" handleDelete={ handleDelete } />
+			<button onClick={ () => setName('luigi') }>change name</button>
 		</div>
 	)
 }
