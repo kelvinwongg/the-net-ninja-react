@@ -8,7 +8,10 @@ const useFetch = (url) => {
 	// Simulate API using json-server:
 	// npx json-server --watch data/db.json --port 8000 --delay 1000
 	useEffect(() => {
-		fetch(url)
+		const abortCtrl = new AbortController();
+
+		// Attached our AbortController to fetch function
+		fetch(url, { signal: abortCtrl.signal })
 			.then(res => {
 				if (!res.ok) {
 					throw Error('Could not fetch data from resource')
@@ -21,9 +24,13 @@ const useFetch = (url) => {
 				setError(null);
 			})
 			.catch(err => {
-				setError(err.message);
-				setIsLoading(false);
+				if (!err.name === 'AbortError') {
+					setError(err.message);
+					setIsLoading(false);
+				}
 			})
+		// Cleanup function, execute when unmount
+		return () => abortCtrl.abort();
 	}, [url]);
 
 	return { data, isLoading, error }
